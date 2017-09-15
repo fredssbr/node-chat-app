@@ -30,6 +30,17 @@ io.on('connection', (socket) => {
     });
 
     //Emits an event to one single connection
+    socket.emit('newMessage', {
+        from: "Admin",
+        text: "Welcome to the chat app.",
+        createdAt: new Date().getTime()
+    });
+    
+    socket.broadcast.emit('newMessage', {
+        from: 'Admin',
+        text: 'New user joined.',
+        createdAt: new Date().getTime()
+    });
 
     socket.on('createMessage', (newMessage) => {
         console.log('createMessage', newMessage);
@@ -39,6 +50,13 @@ io.on('connection', (socket) => {
             text: newMessage.text,
             createdAt: new Date().getTime()
         });
+
+        //Emits event to everybody (every connection) but this socket(myself)
+        // socket.broadcast.emit('newMessage', {
+        //     from: newMessage.from,
+        //     text: newMessage.text,
+        //     createdAt: new Date().getTime()
+        // })
     });
 
 });
