@@ -29,16 +29,17 @@ io.on('connection', (socket) => {
         console.log('A user has disconnected.');
     });
 
-    socket.emit('newMessage', {
-        from: 'John',
-        text: 'You freak, how are things?',
-        createdAt: new Date().getMilliseconds()
-    });
+    //Emits an event to one single connection
 
     socket.on('createMessage', (newMessage) => {
         console.log('createMessage', newMessage);
+        //Emits an event to all connections
+        io.emit('newMessage', {
+            from: newMessage.from,
+            text: newMessage.text,
+            createdAt: new Date().getTime()
+        });
     });
-
 
 });
 
