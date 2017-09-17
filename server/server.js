@@ -6,14 +6,11 @@ const socketIO = require('socket.io');
 /**
  * To reach the public folder, this way would enter the server folder 
  * (since __dirname is the directory of the file we use it) and then 
- * come out of it
+ * come out of it. PATH normalizes it.
  */
 //console.log(__dirname + '/../public');
 const publicPath = path.join(__dirname, '../public');
-/**
- * PATH normalizes it
- */
-//console.log(publicPath);
+const {generateMessage} = require('./utils/message');
 
 var port = process.env.PORT || 3000;
 var app = express();
@@ -30,26 +27,15 @@ io.on('connection', (socket) => {
     });
 
     //Emits an event to one single connection
-    socket.emit('newMessage', {
-        from: "Admin",
-        text: "Welcome to the chat app.",
-        createdAt: new Date().getTime()
-    });
+    socket.emit('newMessage', generateMessage("Admin", "Welcome to the chat app."));
     
-    socket.broadcast.emit('newMessage', {
-        from: 'Admin',
-        text: 'New user joined.',
-        createdAt: new Date().getTime()
-    });
+    //Emits event to everybody (every connection) but this socket(myself)
+    socket.broadcast.emit('newMessage', generateMessage('Admin','New user joined.'));
 
     socket.on('createMessage', (newMessage) => {
         console.log('createMessage', newMessage);
         //Emits an event to all connections
-        io.emit('newMessage', {
-            from: newMessage.from,
-            text: newMessage.text,
-            createdAt: new Date().getTime()
-        });
+        io.emit('newMessage', generateMessage(newMessage.from, newMessage.text));
 
         //Emits event to everybody (every connection) but this socket(myself)
         // socket.broadcast.emit('newMessage', {
