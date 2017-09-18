@@ -28,11 +28,12 @@
     jQuery('#message-form').on('submit', function(e){
         //e = event - in a submit event, it is to refresh the page, which we are overriding below
         e.preventDefault();
+        var messageTextBox = jQuery('[name=message]');
         socket.emit('createMessage', {
             from: 'User',
-            text: jQuery('[name=message]').val()
+            text: messageTextBox.val()
         }, function(){
-            
+            messageTextBox.val('');
         });
     });
 
@@ -41,14 +42,17 @@
         if(!navigator.geolocation){
             return alert('Geolocation not supported by you browser.');
         }
+        locationButton.attr('disabled', 'disabled').text('Sending location...');
         navigator.geolocation.getCurrentPosition(function(position){
+            locationButton.removeAttr('disabled').text('Send location');
             socket.emit('createLocationMessage', {
                 latitude: position.coords.latitude,
                 longitude: position.coords.longitude
             });
         }, function(){
+            locationButton.removeAttr('disabled').text('Send location');
             alert('Unable to fetch location.');
-        })
+        });
     });
 
 })();
