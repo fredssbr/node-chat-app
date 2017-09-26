@@ -81,3 +81,11 @@ io.on('connection', (socket) => {
 server.listen(port, () =>{
     console.log(`Server is running on port ${port}`);
 });
+
+/**
+ New features
+
+ Chat room names case insensitive
+ People with same names show different names in the list
+ Drop down for active rooms
+ */
